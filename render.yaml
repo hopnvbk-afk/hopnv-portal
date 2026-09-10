@@ -1,17 +1,18 @@
 services:
   - type: web
-    name: hopnv-portal-api
-    runtime: python
-    plan: free
-    buildCommand: ""
-    startCommand: python openai_backend.py
-    healthCheckPath: /health
-    envVars:
-      - key: OPENAI_API_KEY
-        sync: false
-      - key: GEMINI_API_KEY
-        sync: false
-      - key: OPENAI_MODEL
-        value: gpt-4o-mini
-      - key: GEMINI_MODEL
-        value: gemini-2.5-flash
+      name: hopnv-portal-api
+          runtime: python
+              plan: free
+                  buildCommand: ""
+                      startCommand: python openai_backend.py
+                          healthCheckPath: /health
+                              envVars:
+                                    - key: OPENAI_API_KEY
+                                            sync: false
+                                                  - key: GEMINI_API_KEY
+                                                          sync: false
+                                                                - key: OPENAI_MODEL
+                                                                        value: gpt-4o-mini
+                                                                              - key: GEMINI_MODEL
+                                                                                      value: gemini-3.6-flash
+                                                                                      

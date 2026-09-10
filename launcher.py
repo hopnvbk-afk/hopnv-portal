@@ -55,6 +55,12 @@ class LauncherHandler(BaseHTTPRequestHandler):
         self.send_cors_headers()
         self.end_headers()
 
+    def do_GET(self):
+        if urlparse(self.path).path == "/health":
+            self.send_json(200, {"status": "ok"})
+            return
+        self.send_json(404, {"message": "Không tìm thấy endpoint."})
+
     def do_POST(self):
         parsed_path = urlparse(self.path)
         if parsed_path.path not in ("/run", "/stop"):

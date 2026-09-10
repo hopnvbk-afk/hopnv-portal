@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT</title>
+    <style>
+        * { box-sizing: border-box; }
+        html, body { height: 100%; }
+        body { margin: 0; overflow: hidden; color: #f4f7ff; font-family: "Segoe UI", Arial, sans-serif; background: transparent; }
+        .chat { display: flex; height: 100%; flex-direction: column; padding: 18px; }
+        .messages { display: flex; flex: 1; flex-direction: column; align-items: flex-start; gap: 8px; overflow-y: auto; margin-bottom: 12px; }
+        .message { max-width: 92%; padding: 9px 11px; border-radius: 10px; background: rgba(70, 217, 255, .1); color: #9ba7c5; font-size: 12px; line-height: 1.45; }
+        .message.user { align-self: flex-end; background: rgba(139, 124, 255, .2); color: #f4f7ff; }
+        .composer { display: flex; align-items: flex-end; gap: 8px; padding: 8px; border: 1px solid rgba(255, 255, 255, .18); border-radius: 15px; background: rgba(255, 255, 255, .08); }
+        .prompt { min-height: 38px; max-height: 90px; flex: 1; padding: 9px 10px; border: 0; outline: none; resize: none; color: #f4f7ff; background: transparent; font: inherit; font-size: 12px; }
+        .prompt::placeholder { color: #9ba7c5; }
+        .send { width: 34px; height: 34px; border: 0; border-radius: 10px; background: #46d9ff; color: #081322; font-size: 16px; font-weight: 700; cursor: pointer; }
+        .send:hover { background: white; }
+    </style>
+</head>
+<body>
+    <main class="chat">
+        <div class="messages">
+            <div class="message" id="provider-label">ChatGPT</div>
+        </div>
+        <form class="composer" id="composer">
+            <textarea class="prompt" id="prompt" rows="1" placeholder="Nhắn tin cho AI" aria-label="Nhắn tin cho AI"></textarea>
+            <button class="send" type="submit" aria-label="Gửi câu hỏi">↑</button>
+        </form>
+    </main>
+    <script>
+        const messages = [];
+        const messageList = document.querySelector(".messages");
+
+        function addMessage(text, role) {
+            const message = document.createElement("div");
+            message.className = `message ${role}`;
+            message.textContent = text;
+            messageList.appendChild(message);
+            messageList.scrollTop = messageList.scrollHeight;
+            return message;
+        }
+
+        document.getElementById("composer").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const prompt = document.getElementById("prompt");
+            const send = document.querySelector(".send");
+            const text = prompt.value.trim();
+            if (!text) return;
+
+            addMessage(text, "user");
+            messages.push({ role: "user", content: text });
+            prompt.value = "";
+            prompt.disabled = true;
+            send.disabled = true;
+            const answer = addMessage("Đang trả lời...", "assistant");
+
+            try {
+                const apiBase = window.HOPNV_API_URL ||
+                    (window.location.protocol === "file:" ? "http://127.0.0.1:8787" : "https://hopnv-portal-api.onrender.com");
+                const response = await fetch(apiBase + "/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ messages })
+                });
+
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || "Backend trả về lỗi.");
+                answer.textContent = result.answer;
+                document.getElementById("provider-label").textContent =
+                    result.provider === "gemini" ? "Gemini" : "ChatGPT";
+                messages.push({ role: "assistant", content: result.answer });
+            } catch (error) {
+                answer.textContent = error instanceof TypeError
+                    ? "Không thể kết nối ChatGPT. Hãy kiểm tra backend online hoặc chạy start_chatgpt.bat khi dùng bản local."
+                    : `Không thể kết nối ChatGPT: ${error.message}`;
+                messages.pop();
+            } finally {
+                prompt.disabled = false;
+                send.disabled = false;
+                prompt.focus();
+            }
+        });
+
+        document.getElementById("prompt").addEventListener("keydown", function (event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                document.getElementById("composer").requestSubmit();
+            }
+        });
+    </script>
+</body>
+</html>

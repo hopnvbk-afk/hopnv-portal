@@ -1,0 +1,26 @@
+{
+  "inventory": {
+    "name": "BÁO CÁO KIỂM KÊ",
+    "path": "D:\\HOPCODE\\BCKK\\main.py"
+  },
+  "wo-stock": {
+    "name": "BÁO CÁO WO TỒN",
+    "path": ""
+  },
+  "asset-handover": {
+    "name": "BÀN GIAO TÀI SẢN",
+    "path": ""
+  },
+  "equipment-transfer": {
+    "name": "ĐIỀU CHUYỂN THIẾT BỊ",
+    "path": ""
+  },
+  "clear-program": {
+    "name": "CLEAR CHƯƠNG TRÌNH",
+    "path": ""
+  },
+  "material-transfer": {
+    "name": "ĐIỀU CHUYỂN VẬT TƯ",
+    "path": ""
+  }
+}

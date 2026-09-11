@@ -200,7 +200,7 @@
                 <div class="brand-mark">H</div>
                 <div><strong>HOPNV</strong><small>Management portal</small></div>
             </div>
-            <div class="profile"><div class="date-box">Hôm nay<strong id="current-date">09 Tháng 09, 2026</strong></div><div class="avatar">A</div></div>
+            <div class="profile"><div class="date-box">Hôm nay<strong id="current-date"></strong></div><div class="avatar">A</div></div>
         </header>
 
         <section class="hero">
@@ -277,6 +277,17 @@
     </main>
 
     <script>
+        function updateCurrentDate() {
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, "0");
+            const month = String(now.getMonth() + 1).padStart(2, "0");
+            document.getElementById("current-date").textContent =
+                `${day} Tháng ${month}, ${now.getFullYear()}`;
+        }
+
+        updateCurrentDate();
+        window.setInterval(updateCurrentDate, 60 * 1000);
+
         document.getElementById("search").addEventListener("input", function () {
             const keyword = this.value.toLowerCase();
             document.querySelectorAll(".card").forEach(function (card) {
